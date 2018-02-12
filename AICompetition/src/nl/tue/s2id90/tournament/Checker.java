@@ -23,7 +23,7 @@ import nl.tue.s2id90.game.Player;
  * tournament.
  * <ol>
  * <li> have precisely one player per plugin
- * <li> have q unique package name: nl.tue.s2id90.groupNN
+ * <li> have q unique package name: nl.tue.s2id90.group51
  * </ol>
  *
  * @author huub
