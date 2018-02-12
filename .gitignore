@@ -1,0 +1,6 @@
+ # Build artifacts
+ dist/
+
+ # IntelliJ stuff
+ *.iml
+ .idea/
