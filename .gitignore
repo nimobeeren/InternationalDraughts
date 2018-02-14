@@ -1,6 +1,9 @@
- # Build artifacts
- dist/
+# Build artifacts
+dist/
 
- # IntelliJ stuff
- *.iml
- .idea/
+# Compiled classes
+out/
+
+# IntelliJ stuff
+*.iml
+.idea/
