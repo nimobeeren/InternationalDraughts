@@ -190,6 +190,23 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
     /**
      * A method that evaluates the given state.
      */
-    // ToDo: write an appropriate evaluation function
-    int evaluate(DraughtsState state) { return 0; }
+    int evaluate(DraughtsState state) {
+        int numWhite = 0, numBlack = 0;
+
+        int[] pieces = state.getPieces();
+        for (int p : pieces) {
+            switch (p) {
+                case DraughtsState.WHITEPIECE:
+                case DraughtsState.WHITEKING:
+                    numWhite++;
+                    break;
+                case DraughtsState.BLACKPIECE:
+                case DraughtsState.BLACKKING:
+                    numBlack++;
+                    break;
+            }
+        }
+
+        return numWhite - numBlack;
+    }
 }
