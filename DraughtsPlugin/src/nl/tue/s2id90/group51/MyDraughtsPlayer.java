@@ -184,7 +184,7 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
             children.remove(0);
             state.undoMove(move);
         }
-        return beta;
+        return alpha;
     }
 
     /**
