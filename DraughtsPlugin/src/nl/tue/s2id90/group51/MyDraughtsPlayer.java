@@ -201,12 +201,16 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
         for (int p : pieces) {
             switch (p) {
                 case DraughtsState.WHITEPIECE:
+                    numWhite += 1;
+                    break;
                 case DraughtsState.WHITEKING:
-                    numWhite++;
+                    numWhite += 3;
                     break;
                 case DraughtsState.BLACKPIECE:
+                    numBlack += 1;
+                    break;
                 case DraughtsState.BLACKKING:
-                    numBlack++;
+                    numBlack += 3;
                     break;
             }
         }
