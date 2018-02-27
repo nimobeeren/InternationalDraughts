@@ -13,7 +13,7 @@ import org10x10.dam.game.Move;
 /**
  * Implementation of the DraughtsPlayer interface.
  *
- * @author huub
+ * @author Nimo Beeren & Maas van Apeldoorn
  */
 // ToDo: rename this class (and hence this file) to have a distinct name
 //       for your player during the tournament
@@ -22,7 +22,7 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
     int maxSearchDepth;
 
     /**
-     * boolean that indicates that the GUI asked the player to stop thinking.
+     * Boolean that indicates that the GUI asked the player to stop thinking.
      */
     private boolean stopped;
 
@@ -79,7 +79,7 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
     }
 
     /**
-     * returns random valid move in state s, or null if no moves exist.
+     * Returns random valid move in state s, or null if no moves exist.
      */
     Move getRandomValidMove(DraughtsState s) {
         List<Move> moves = s.getMoves();
@@ -91,10 +91,10 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
      * Implementation of alpha-beta that automatically chooses the white player
      * as maximizing player and the black player as minimizing player.
      *
-     * @param node  contains DraughtsState and has field to which the best move can be assigned.
-     * @param alpha
-     * @param beta
-     * @param depth maximum recursion Depth
+     * @param node contains DraughtsState and has field to which the best move can be assigned
+     * @param alpha the best value for the maximizing player
+     * @param beta the best value for the minimizing player
+     * @param depth maximum recursion depth
      * @return the computed value of this node
      * @throws AIStoppedException
      **/
@@ -111,11 +111,11 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
      * Does an alpha-beta computation with the given alpha and beta
      * where the player that is to move in node is the minimizing player.
      *
-     * @param node  contains DraughtsState and has field to which the best move can be assigned.
-     * @param alpha
-     * @param beta
-     * @param depth maximum recursion Depth
-     * @return the compute value of this node
+     * @param node contains DraughtsState and has field to which the best move can be assigned
+     * @param alpha the best value for the maximizing player
+     * @param beta the best value for the minimizing player
+     * @param depth maximum recursion depth
+     * @return the computed value of this node
      * @throws AIStoppedException thrown whenever the boolean stopped has been set to true.
      */
     int alphaBetaMin(DraughtsNode node, int alpha, int beta, int depth)
@@ -153,11 +153,11 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
      * Does an alpha-beta computation with the given alpha and beta
      * where the player that is to move in node is the maximizing player.
      *
-     * @param node  contains DraughtsState and has field to which the best move can be assigned.
-     * @param alpha
-     * @param beta
-     * @param depth maximum recursion Depth
-     * @return the compute value of this node
+     * @param node contains DraughtsState and has field to which the best move can be assigned
+     * @param alpha the best value for the maximizing player
+     * @param beta the best value for the minimizing player
+     * @param depth maximum recursion depth
+     * @return the computed value of this node
      * @throws AIStoppedException thrown whenever the boolean stopped has been set to true.
      */
     int alphaBetaMax(DraughtsNode node, int alpha, int beta, int depth)
