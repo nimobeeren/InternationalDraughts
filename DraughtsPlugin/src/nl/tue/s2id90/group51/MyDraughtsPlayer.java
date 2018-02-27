@@ -134,15 +134,17 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
             state.doMove(move);
             DraughtsNode childNode = new DraughtsNode(state);
             int childValue = alphaBetaMax(childNode, alpha, beta, depth - 1);
-            if (childValue <= beta) {
+            if (childValue < beta) {
                 beta = childValue;
                 node.setBestMove(move);
             }
+
+            children.remove(0);
+            state.undoMove(move);
+
             if (beta <= alpha) {
                 return alpha;
             }
-            children.remove(0);
-            state.undoMove(move);
         }
         return beta;
     }
@@ -174,15 +176,17 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
             state.doMove(move);
             DraughtsNode childNode = new DraughtsNode(state);
             int childValue = alphaBetaMin(childNode, alpha, beta, depth - 1);
-            if (childValue >= alpha) {
+            if (childValue > alpha) {
                 alpha = childValue;
                 node.setBestMove(move);
             }
+
+            children.remove(0);
+            state.undoMove(move);
+
             if (alpha >= beta) {
                 return beta;
             }
-            children.remove(0);
-            state.undoMove(move);
         }
         return alpha;
     }
