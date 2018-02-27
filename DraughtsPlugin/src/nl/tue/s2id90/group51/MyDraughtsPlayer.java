@@ -1,14 +1,14 @@
 package nl.tue.s2id90.group51;
 
-import static java.lang.Integer.MAX_VALUE;
-import static java.lang.Integer.MIN_VALUE;
+import nl.tue.s2id90.draughts.DraughtsState;
+import nl.tue.s2id90.draughts.player.DraughtsPlayer;
+import org10x10.dam.game.Move;
 
 import java.util.Collections;
 import java.util.List;
 
-import nl.tue.s2id90.draughts.DraughtsState;
-import nl.tue.s2id90.draughts.player.DraughtsPlayer;
-import org10x10.dam.game.Move;
+import static java.lang.Integer.MAX_VALUE;
+import static java.lang.Integer.MIN_VALUE;
 
 /**
  * Implementation of the DraughtsPlayer interface.
@@ -19,14 +19,14 @@ import org10x10.dam.game.Move;
 //       for your player during the tournament
 public class MyDraughtsPlayer extends DraughtsPlayer {
     private int bestValue = 0;
-    int maxSearchDepth;
+    private int maxSearchDepth;
 
     /**
      * Boolean that indicates that the GUI asked the player to stop thinking.
      */
     private boolean stopped;
 
-    public MyDraughtsPlayer(int maxSearchDepth) {
+    MyDraughtsPlayer(int maxSearchDepth) {
         super("best.png"); // ToDo: replace with your own icon
         this.maxSearchDepth = maxSearchDepth;
     }
@@ -81,7 +81,7 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
     /**
      * Returns random valid move in state s, or null if no moves exist.
      */
-    Move getRandomValidMove(DraughtsState s) {
+    private Move getRandomValidMove(DraughtsState s) {
         List<Move> moves = s.getMoves();
         Collections.shuffle(moves);
         return moves.isEmpty() ? null : moves.get(0);
@@ -91,14 +91,14 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
      * Implementation of alpha-beta that automatically chooses the white player
      * as maximizing player and the black player as minimizing player.
      *
-     * @param node contains DraughtsState and has field to which the best move can be assigned
+     * @param node  contains DraughtsState and has field to which the best move can be assigned
      * @param alpha the best value for the maximizing player
-     * @param beta the best value for the minimizing player
+     * @param beta  the best value for the minimizing player
      * @param depth maximum recursion depth
      * @return the computed value of this node
      * @throws AIStoppedException
      **/
-    int alphaBeta(DraughtsNode node, int alpha, int beta, int depth)
+    private int alphaBeta(DraughtsNode node, int alpha, int beta, int depth)
             throws AIStoppedException {
         if (node.getState().isWhiteToMove()) {
             return alphaBetaMax(node, alpha, beta, depth);
@@ -111,14 +111,14 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
      * Does an alpha-beta computation with the given alpha and beta
      * where the player that is to move in node is the minimizing player.
      *
-     * @param node contains DraughtsState and has field to which the best move can be assigned
+     * @param node  contains DraughtsState and has field to which the best move can be assigned
      * @param alpha the best value for the maximizing player
-     * @param beta the best value for the minimizing player
+     * @param beta  the best value for the minimizing player
      * @param depth maximum recursion depth
      * @return the computed value of this node
      * @throws AIStoppedException thrown whenever the boolean stopped has been set to true.
      */
-    int alphaBetaMin(DraughtsNode node, int alpha, int beta, int depth)
+    private int alphaBetaMin(DraughtsNode node, int alpha, int beta, int depth)
             throws AIStoppedException {
         if (stopped) {
             stopped = false;
@@ -153,14 +153,14 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
      * Does an alpha-beta computation with the given alpha and beta
      * where the player that is to move in node is the maximizing player.
      *
-     * @param node contains DraughtsState and has field to which the best move can be assigned
+     * @param node  contains DraughtsState and has field to which the best move can be assigned
      * @param alpha the best value for the maximizing player
-     * @param beta the best value for the minimizing player
+     * @param beta  the best value for the minimizing player
      * @param depth maximum recursion depth
      * @return the computed value of this node
      * @throws AIStoppedException thrown whenever the boolean stopped has been set to true.
      */
-    int alphaBetaMax(DraughtsNode node, int alpha, int beta, int depth)
+    private int alphaBetaMax(DraughtsNode node, int alpha, int beta, int depth)
             throws AIStoppedException {
         if (stopped) {
             stopped = false;
@@ -194,7 +194,7 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
     /**
      * A method that evaluates the given state.
      */
-    int evaluate(DraughtsState state) {
+    private int evaluate(DraughtsState state) {
         int numWhite = 0, numBlack = 0;
 
         int[] pieces = state.getPieces();
