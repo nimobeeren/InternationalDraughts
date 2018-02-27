@@ -128,9 +128,9 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
         if (depth <= 0) {
             return evaluate(state);
         }
-        List<Move> children = state.getMoves();
-        while (!children.isEmpty()) {
-            Move move = children.get(0);
+        List<Move> moves = state.getMoves();
+        while (!moves.isEmpty()) {
+            Move move = moves.get(0);
             state.doMove(move);
             DraughtsNode childNode = new DraughtsNode(state);
             int childValue = alphaBetaMax(childNode, alpha, beta, depth - 1);
@@ -139,7 +139,7 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
                 node.setBestMove(move);
             }
 
-            children.remove(0);
+            moves.remove(0);
             state.undoMove(move);
 
             if (beta <= alpha) {
@@ -170,9 +170,9 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
         if (depth <= 0) {
             return evaluate(state);
         }
-        List<Move> children = state.getMoves();
-        while (!children.isEmpty()) {
-            Move move = children.get(0);
+        List<Move> moves = state.getMoves();
+        while (!moves.isEmpty()) {
+            Move move = moves.get(0);
             state.doMove(move);
             DraughtsNode childNode = new DraughtsNode(state);
             int childValue = alphaBetaMin(childNode, alpha, beta, depth - 1);
@@ -181,7 +181,7 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
                 node.setBestMove(move);
             }
 
-            children.remove(0);
+            moves.remove(0);
             state.undoMove(move);
 
             if (alpha >= beta) {
