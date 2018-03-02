@@ -17,7 +17,7 @@ import static java.lang.Integer.MIN_VALUE;
  */
 // ToDo: rename this class (and hence this file) to have a distinct name
 //       for your player during the tournament
-public class MyDraughtsPlayer extends DraughtsPlayer {
+public class AlphaBeast extends DraughtsPlayer {
     private int bestValue = 0;
     private int maxSearchDepth;
 
@@ -26,7 +26,7 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
      */
     private boolean stopped;
 
-    MyDraughtsPlayer(int maxSearchDepth) {
+    AlphaBeast(int maxSearchDepth) {
         super("best.png"); // ToDo: replace with your own icon
         this.maxSearchDepth = maxSearchDepth;
     }
@@ -37,18 +37,20 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
         bestValue = 0;
         DraughtsNode node = new DraughtsNode(s);    // the root of the search tree
         try {
-            // compute bestMove and bestValue in a call to alphaBeta
-            bestValue = alphaBeta(node, MIN_VALUE, MAX_VALUE, maxSearchDepth);
+            for (int depth = 1; depth <= maxSearchDepth; depth++) {
+                // compute bestMove and bestValue in a call to alphaBeta
+                bestValue = alphaBeta(node, MIN_VALUE, MAX_VALUE, depth);
 
-            // store the bestMove found up until now
-            // NB this is not done in case of an AIStoppedException in alphaBeta()
-            bestMove = node.getBestMove();
+                // store the bestMove found up until now
+                // NB this is not done in case of an AIStoppedException in alphaBeta()
+                bestMove = node.getBestMove();
 
-            // print the results for debugging reasons
-            System.err.format(
-                    "%s: depth= %2d, best move = %5s, value=%d\n",
-                    this.getClass().getSimpleName(), maxSearchDepth, bestMove, bestValue
-            );
+                // print the results for debugging reasons
+                System.err.format(
+                        "%s: depth=%2d, best move = %5s, value=%d\n",
+                        this.getClass().getSimpleName(), depth, bestMove.getChessNotation(), bestValue
+                );
+            }
         } catch (AIStoppedException ex) {  /* nothing to do */ }
 
         if (bestMove == null) {
