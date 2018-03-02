@@ -4,6 +4,9 @@ dist/
 # Compiled classes
 out/
 
+# Other competitors
+plugins/
+
 # IntelliJ stuff
 *.iml
 .idea/
