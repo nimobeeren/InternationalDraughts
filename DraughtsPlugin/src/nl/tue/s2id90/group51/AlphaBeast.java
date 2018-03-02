@@ -197,26 +197,47 @@ public class AlphaBeast extends DraughtsPlayer {
      * A method that evaluates the given state.
      */
     int evaluate(DraughtsState state) {
-        int numWhite = 0, numBlack = 0;
-
         int[] pieces = state.getPieces();
+
+        int countWhite = 0, countBlack = 0;
         for (int p : pieces) {
             switch (p) {
                 case DraughtsState.WHITEPIECE:
-                    numWhite = numWhite + 1;
+                    countWhite += 1;
                     break;
                 case DraughtsState.WHITEKING:
-                    numWhite = numWhite + 3;
+                    countWhite += 3;
                     break;
                 case DraughtsState.BLACKPIECE:
-                    numBlack = numBlack + 1;
+                    countBlack += 1;
                     break;
                 case DraughtsState.BLACKKING:
-                    numBlack = numBlack + 3;
+                    countBlack += 3;
                     break;
             }
         }
+        int countDiff = countWhite - countBlack;
 
-        return numWhite - numBlack;
+        int tempiWhite = 0, tempiBlack = 0;
+        for (int i = 1; i < pieces.length; i++) {
+            int row;
+            switch (pieces[i]) {
+                case DraughtsState.WHITEPIECE:
+                    row = getRow(i);
+                    tempiWhite += 11 - row;
+                    break;
+                case DraughtsState.BLACKPIECE:
+                    row = getRow(i);
+                    tempiBlack += row;
+                    break;
+            }
+        }
+        int tempiDiff = tempiWhite - tempiBlack;
+
+        return 3 * countDiff + tempiDiff;
+    }
+
+    private int getRow(int piece) {
+        return 1 + (piece - 1) / 5;
     }
 }
