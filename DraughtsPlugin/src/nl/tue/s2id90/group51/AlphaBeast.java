@@ -17,7 +17,7 @@ import org10x10.dam.game.Move;
  */
 // ToDo: rename this class (and hence this file) to have a distinct name
 //       for your player during the tournament
-public class MyDraughtsPlayer extends DraughtsPlayer {
+public class AlphaBeast extends DraughtsPlayer {
     private int bestValue = 0;
     int maxSearchDepth;
 
@@ -26,7 +26,7 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
      */
     private boolean stopped;
 
-    public MyDraughtsPlayer(int maxSearchDepth) {
+    public AlphaBeast(int maxSearchDepth) {
         super("best.png"); // ToDo: replace with your own icon
         this.maxSearchDepth = maxSearchDepth;
     }
@@ -48,7 +48,7 @@ public class MyDraughtsPlayer extends DraughtsPlayer {
                 // print the results for debugging reasons
                 System.err.format(
                         "%s: depth=%2d, best move = %5s, value=%d\n",
-                        this.getClass().getSimpleName(), depth, bestMove, bestValue
+                        this.getClass().getSimpleName(), depth, bestMove.getChessNotation(), bestValue
                 );
             }
         } catch (AIStoppedException ex) {  /* nothing to do */ }
