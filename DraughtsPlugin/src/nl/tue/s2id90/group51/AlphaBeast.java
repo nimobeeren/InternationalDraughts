@@ -48,7 +48,7 @@ public class AlphaBeast extends DraughtsPlayer {
                 // print the results for debugging reasons
                 System.err.format(
                         "%s: depth=%2d, best move = %5s, value=%d\n",
-                        this.getClass().getSimpleName(), depth, bestMove.getChessNotation(), bestValue
+                        this.getClass().getSimpleName(), depth, bestMove, bestValue
                 );
             }
         } catch (AIStoppedException ex) {  /* nothing to do */ }
