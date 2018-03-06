@@ -198,53 +198,58 @@ public class AlphaBeast extends DraughtsPlayer {
      * A method that evaluates the given state.
      */
     private int evaluate(DraughtsState state) {
-        int numWhite = 0, numBlack = 0;
         int[] pieces = state.getPieces();
-        /**
-         * A function that counts the number of pieces per player and gives
-         * appropriate points
-         */
+
+        // Count the number of pieces for each side
+        int countWhite = 0, countBlack = 0;
         for (int p : pieces) {
             switch (p) {
             case DraughtsState.WHITEPIECE:
-                numWhite = numWhite + 12;
+                countWhite += 1;
                 break;
             case DraughtsState.WHITEKING:
-                numWhite = numWhite + 36;
+                countWhite += 3;
                 break;
             case DraughtsState.BLACKPIECE:
-                numBlack = numBlack + 12;
+                countBlack += 1;
                 break;
             case DraughtsState.BLACKKING:
-                numBlack = numBlack + 36;
+                countBlack += 3;
                 break;
             }
         }
-        /**
-         * This function calls the auxilary methods for positional play
-         */
+        int countTotal = countWhite + countBlack;
+        int countDiff = countWhite - countBlack;
+
+        // Check for formations
+        int formationWhite = 0, formationBlack = 0;
         for (int i = 1; i <= 50; i++) {
             if (pieces[i] == DraughtsState.WHITEPIECE) {
-                numWhite += formationSeekerW(pieces, i, 1);
+                formationWhite += formationSeekerW(pieces, i, 1);
             } else if (pieces[i] == DraughtsState.BLACKPIECE) {
-                numBlack += formationSeekerB(pieces, i, 1);
+                formationBlack += formationSeekerB(pieces, i, 1);
             }
         }
-        /**
-         * counts the total number of pieces on the board
-         */
-        int numberOfPieces = numberOfPieces(pieces);
-        /**
-         * counts the pieces on the baseline for the first half of the game and
-         * gives extra points for them
-         */
-        if (numberOfPieces >= 25) {
-            int baselineWhite = baselineWhite(numWhite, numBlack, pieces, numberOfPieces);
-            int baselineBlack = baselineBlack(numWhite, numBlack, pieces, numberOfPieces);
-            numWhite += baselineWhite;
-            numBlack += baselineBlack;
-        }
+        int formationDiff = formationWhite - formationBlack;
 
+
+        // Count number of pieces on the baseline for each side
+        int baselineWhite = 0, baselineBlack = 0;
+        if (countTotal >= 25) {
+            for (int i = 46; i <= 50; i++) {
+                if (pieces[i] == DraughtsState.WHITEPIECE || pieces[i] == DraughtsState.WHITEKING) {
+                    baselineWhite++;
+                }
+            }
+            for (int i = 1; i <= 5; i++) {
+                if (pieces[i] == DraughtsState.BLACKPIECE || pieces[i] == DraughtsState.BLACKKING) {
+                    baselineBlack++;
+                }
+            }
+        }
+        int baselineDiff = baselineWhite - baselineBlack;
+
+        // Calculate tempi difference
         int tempiWhite = 0, tempiBlack = 0;
         for (int i = 1; i < pieces.length; i++) {
             int row;
@@ -261,77 +266,13 @@ public class AlphaBeast extends DraughtsPlayer {
         }
         int tempiDiff = tempiWhite - tempiBlack;
 
-        return numWhite - numBlack + tempiDiff;
+        return 12 * countDiff + 2 * formationDiff + baselineDiff + tempiDiff;
     }
 
     private int getRow(int piece) {
         return 1 + (piece - 1) / 5;
     }
 
-    /**
-     *
-     * @param pieces
-     * @return number of pieces on the board (regular pieces and kings)
-     * @pre pieces is not empty
-     */
-    public int numberOfPieces(int[] pieces) {
-        int piecesOnBoard = 0;
-        for (int p : pieces) {
-            switch (p) {
-            case DraughtsState.WHITEPIECE:
-                piecesOnBoard++;
-                break;
-            case DraughtsState.WHITEKING:
-                piecesOnBoard++;
-                break;
-            case DraughtsState.BLACKPIECE:
-                piecesOnBoard++;
-                break;
-            case DraughtsState.BLACKKING:
-                piecesOnBoard++;
-                break;
-            }
-        }
-        return piecesOnBoard;
-    }
-
-    /**
-     * @param numWhite
-     * @param numBlack
-     * @param pieces
-     * @param numberOfPieces
-     * @return the number of white pieces on the baseline for the first half of
-     * the game to prevent holes in the defence
-     * @pre numWhite, numBlack are not 0 && pieces != 0 && numberOfPieces >= 25
-     */
-    public int baselineWhite(int numWhite, int numBlack, int[] pieces, int numberOfPieces) {
-        int baseLinePoints = 0;
-        for (int i = 46; i <= 50; i++) {
-            if (pieces[i] == DraughtsState.WHITEPIECE || pieces[i] == DraughtsState.WHITEKING) {
-                baseLinePoints++;
-            }
-        }
-        return baseLinePoints;
-    }
-
-    /**
-     * @param numWhite
-     * @param numBlack
-     * @param pieces
-     * @param numberOfPieces
-     * @return the number of black pieces on the baseline for the first half of
-     * the game to prevent holes in the defence
-     * @pre numWhite, numBlack are not 0 && pieces != 0 && numberOfPieces >= 25
-     */
-    public int baselineBlack(int numWhite, int numBlack, int[] pieces, int numberOfPieces) {
-        int baseLinePoints = 0;
-        for (int i = 1; i <= 5; i++) {
-            if (pieces[i] == DraughtsState.BLACKPIECE || pieces[i] == DraughtsState.BLACKKING) {
-                baseLinePoints++;
-            }
-        }
-        return baseLinePoints;
-    }
     /**
      * @param pieces
      * @param i
@@ -371,7 +312,7 @@ public class AlphaBeast extends DraughtsPlayer {
                 return score;
             }
         }
-        return score * 2;
+        return score;
     }
 
     public int formationSeekerB(int[] pieces, int i, int score) {
@@ -405,6 +346,6 @@ public class AlphaBeast extends DraughtsPlayer {
                 return score;
             }
         }
-        return score * 2;
+        return score;
     }
 }
