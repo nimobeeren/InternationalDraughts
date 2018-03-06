@@ -13,20 +13,20 @@ import org10x10.dam.game.Move;
 /**
  * Implementation of the DraughtsPlayer interface.
  *
- * @author huub
+ * @author Nimo Beeren & Maas van Apeldoorn
  */
 // ToDo: rename this class (and hence this file) to have a distinct name
 //       for your player during the tournament
 public class AlphaBeast extends DraughtsPlayer {
     private int bestValue = 0;
-    int maxSearchDepth;
+    private int maxSearchDepth;
 
     /**
-     * boolean that indicates that the GUI asked the player to stop thinking.
+     * Boolean that indicates that the GUI asked the player to stop thinking.
      */
     private boolean stopped;
 
-    public AlphaBeast(int maxSearchDepth) {
+    AlphaBeast(int maxSearchDepth) {
         super("best.png"); // ToDo: replace with your own icon
         this.maxSearchDepth = maxSearchDepth;
     }
@@ -48,7 +48,7 @@ public class AlphaBeast extends DraughtsPlayer {
                 // print the results for debugging reasons
                 System.err.format(
                         "%s: depth=%2d, best move = %5s, value=%d\n",
-                        this.getClass().getSimpleName(), depth, bestMove, bestValue
+                        this.getClass().getSimpleName(), depth, bestMove.getChessNotation(), bestValue
                 );
             }
         } catch (AIStoppedException ex) {  /* nothing to do */ }
@@ -64,7 +64,8 @@ public class AlphaBeast extends DraughtsPlayer {
     /**
      * This method's return value is displayed in the AICompetition GUI.
      *
-     * @return the value for the draughts state s as it is computed in a call to getMove(s).
+     * @return the value for the draughts state s as it is computed in a call to
+     * getMove(s).
      */
     @Override
     public Integer getValue() {
@@ -81,9 +82,9 @@ public class AlphaBeast extends DraughtsPlayer {
     }
 
     /**
-     * returns random valid move in state s, or null if no moves exist.
+     * Returns random valid move in state s, or null if no moves exist.
      */
-    Move getRandomValidMove(DraughtsState s) {
+    private Move getRandomValidMove(DraughtsState s) {
         List<Move> moves = s.getMoves();
         Collections.shuffle(moves);
         return moves.isEmpty() ? null : moves.get(0);
@@ -93,14 +94,15 @@ public class AlphaBeast extends DraughtsPlayer {
      * Implementation of alpha-beta that automatically chooses the white player
      * as maximizing player and the black player as minimizing player.
      *
-     * @param node  contains DraughtsState and has field to which the best move can be assigned.
+     * @param node contains DraughtsState and has field to which the best move
+     * can be assigned.
      * @param alpha
      * @param beta
      * @param depth maximum recursion Depth
      * @return the computed value of this node
      * @throws AIStoppedException
      **/
-    int alphaBeta(DraughtsNode node, int alpha, int beta, int depth)
+    private int alphaBeta(DraughtsNode node, int alpha, int beta, int depth)
             throws AIStoppedException {
         if (node.getState().isWhiteToMove()) {
             return alphaBetaMax(node, alpha, beta, depth);
@@ -110,17 +112,17 @@ public class AlphaBeast extends DraughtsPlayer {
     }
 
     /**
-     * Does an alpha-beta computation with the given alpha and beta
-     * where the player that is to move in node is the minimizing player.
+     * Does an alpha-beta computation with the given alpha and beta where the
+     * player that is to move in node is the minimizing player.
      *
-     * @param node  contains DraughtsState and has field to which the best move can be assigned.
-     * @param alpha
-     * @param beta
-     * @param depth maximum recursion Depth
-     * @return the compute value of this node
+     * @param node  contains DraughtsState and has field to which the best move can be assigned
+     * @param alpha the best value for the maximizing player
+     * @param beta  the best value for the minimizing player
+     * @param depth maximum recursion depth
+     * @return the computed value of this node
      * @throws AIStoppedException thrown whenever the boolean stopped has been set to true.
      */
-    int alphaBetaMin(DraughtsNode node, int alpha, int beta, int depth)
+    private int alphaBetaMin(DraughtsNode node, int alpha, int beta, int depth)
             throws AIStoppedException {
         if (stopped) {
             stopped = false;
@@ -130,9 +132,9 @@ public class AlphaBeast extends DraughtsPlayer {
         if (depth <= 0) {
             return evaluate(state);
         }
-        List<Move> children = state.getMoves();
-        while (!children.isEmpty()) {
-            Move move = children.get(0);
+        List<Move> moves = state.getMoves();
+        while (!moves.isEmpty()) {
+            Move move = moves.get(0);
             state.doMove(move);
             DraughtsNode childNode = new DraughtsNode(state);
             int childValue = alphaBetaMax(childNode, alpha, beta, depth - 1);
@@ -141,7 +143,7 @@ public class AlphaBeast extends DraughtsPlayer {
                 node.setBestMove(move);
             }
 
-            children.remove(0);
+            moves.remove(0);
             state.undoMove(move);
 
             if (beta <= alpha) {
@@ -152,17 +154,17 @@ public class AlphaBeast extends DraughtsPlayer {
     }
 
     /**
-     * Does an alpha-beta computation with the given alpha and beta
-     * where the player that is to move in node is the maximizing player.
+     * Does an alpha-beta computation with the given alpha and beta where the
+     * player that is to move in node is the maximizing player.
      *
-     * @param node  contains DraughtsState and has field to which the best move can be assigned.
-     * @param alpha
-     * @param beta
-     * @param depth maximum recursion Depth
-     * @return the compute value of this node
+     * @param node  contains DraughtsState and has field to which the best move can be assigned
+     * @param alpha the best value for the maximizing player
+     * @param beta  the best value for the minimizing player
+     * @param depth maximum recursion depth
+     * @return the computed value of this node
      * @throws AIStoppedException thrown whenever the boolean stopped has been set to true.
      */
-    int alphaBetaMax(DraughtsNode node, int alpha, int beta, int depth)
+    private int alphaBetaMax(DraughtsNode node, int alpha, int beta, int depth)
             throws AIStoppedException {
         if (stopped) {
             stopped = false;
@@ -172,9 +174,9 @@ public class AlphaBeast extends DraughtsPlayer {
         if (depth <= 0) {
             return evaluate(state);
         }
-        List<Move> children = state.getMoves();
-        while (!children.isEmpty()) {
-            Move move = children.get(0);
+        List<Move> moves = state.getMoves();
+        while (!moves.isEmpty()) {
+            Move move = moves.get(0);
             state.doMove(move);
             DraughtsNode childNode = new DraughtsNode(state);
             int childValue = alphaBetaMin(childNode, alpha, beta, depth - 1);
@@ -183,7 +185,7 @@ public class AlphaBeast extends DraughtsPlayer {
                 node.setBestMove(move);
             }
 
-            children.remove(0);
+            moves.remove(0);
             state.undoMove(move);
 
             if (alpha >= beta) {
@@ -196,42 +198,57 @@ public class AlphaBeast extends DraughtsPlayer {
     /**
      * A method that evaluates the given state.
      */
-    int evaluate(DraughtsState state) {
+    private int evaluate(DraughtsState state) {
+        int numWhite = 0, numBlack = 0;
         int[] pieces = state.getPieces();
-
-        int countWhite = 0, countBlack = 0;
+        /**
+         * A function that counts the number of pieces per player and gives
+         * appropriate points
+         */
         for (int p : pieces) {
             switch (p) {
-                case DraughtsState.WHITEPIECE:
-                    countWhite += 1;
-                    break;
-                case DraughtsState.WHITEKING:
-                    countWhite += 3;
-                    break;
-                case DraughtsState.BLACKPIECE:
-                    countBlack += 1;
-                    break;
-                case DraughtsState.BLACKKING:
-                    countBlack += 3;
-                    break;
+            case DraughtsState.WHITEPIECE:
+                numWhite = numWhite + 12;
+                break;
+            case DraughtsState.WHITEKING:
+                numWhite = numWhite + 36;
+                break;
+            case DraughtsState.BLACKPIECE:
+                numBlack = numBlack + 12;
+                break;
+            case DraughtsState.BLACKKING:
+                numBlack = numBlack + 36;
+                break;
             }
         }
-        int countDiff = countWhite - countBlack;
-
-        int tempiWhite = 0, tempiBlack = 0;
-        for (int i = 1; i < pieces.length; i++) {
-            int row;
-            switch (pieces[i]) {
-                case DraughtsState.WHITEPIECE:
-                    row = getRow(i);
-                    tempiWhite += 11 - row;
-                    break;
-                case DraughtsState.BLACKPIECE:
-                    row = getRow(i);
-                    tempiBlack += row;
-                    break;
+        /**
+         * This function calls the auxilary methods for positional play
+         */
+        for (int i = 1; i <= 50; i++) {
+            if (pieces[i] == DraughtsState.WHITEPIECE) {
+                numWhite += formationSeekerW(pieces, i, 1);
+            } else if (pieces[i] == DraughtsState.BLACKPIECE) {
+                numBlack += formationSeekerB(pieces, i, 1);
             }
         }
+        /**
+         * counts the total number of pieces on the board
+         */
+        int numberOfPieces = numberOfPieces(pieces);
+        /**
+         * counts the pieces on the baseline for the first half of the game and
+         * gives extra points for them
+         */
+        if (numberOfPieces >= 25) {
+            int baselineWhite = baselineWhite(numWhite, numBlack, pieces, numberOfPieces);
+            int baselineBlack = baselineBlack(numWhite, numBlack, pieces, numberOfPieces);
+            numWhite = +baselineWhite;
+            numWhite = +baselineBlack;
+        }
+        /**
+         * Returns the difference in total scores between black and white
+         */
+        return numWhite - numBlack;
         int tempiDiff = tempiWhite - tempiBlack;
 
         return 3 * countDiff + tempiDiff;
@@ -239,5 +256,145 @@ public class AlphaBeast extends DraughtsPlayer {
 
     private int getRow(int piece) {
         return 1 + (piece - 1) / 5;
+    }
+
+    /**
+     *
+     * @param pieces
+     * @return number of pieces on the board (regular pieces and kings)
+     * @pre pieces is not empty
+     */
+    public int numberOfPieces(int[] pieces) {
+        int piecesOnBoard = 0;
+        for (int p : pieces) {
+            switch (p) {
+            case DraughtsState.WHITEPIECE:
+                piecesOnBoard++;
+                break;
+            case DraughtsState.WHITEKING:
+                piecesOnBoard++;
+                break;
+            case DraughtsState.BLACKPIECE:
+                piecesOnBoard++;
+                break;
+            case DraughtsState.BLACKKING:
+                piecesOnBoard++;
+                break;
+            }
+        }
+        return piecesOnBoard;
+    }
+
+    /**
+     * @param numWhite
+     * @param numBlack
+     * @param pieces
+     * @param numberOfPieces
+     * @return the number of white pieces on the baseline for the first half of
+     * the game to prevent holes in the defence
+     * @pre numWhite, numBlack are not 0 && pieces != 0 && numberOfPieces >= 25
+     */
+    public int baselineWhite(int numWhite, int numBlack, int[] pieces, int numberOfPieces) {
+        int baseLinePoints = 0;
+        for (int i = 46; i <= 50; i++) {
+            if (pieces[i] == DraughtsState.WHITEPIECE || pieces[i] == DraughtsState.WHITEKING) {
+                baseLinePoints++;
+            }
+        }
+        return baseLinePoints;
+    }
+
+    /**
+     * @param numWhite
+     * @param numBlack
+     * @param pieces
+     * @param numberOfPieces
+     * @return the number of black pieces on the baseline for the first half of
+     * the game to prevent holes in the defence
+     * @pre numWhite, numBlack are not 0 && pieces != 0 && numberOfPieces >= 25
+     */
+    public int baselineBlack(int numWhite, int numBlack, int[] pieces, int numberOfPieces) {
+        int baseLinePoints = 0;
+        for (int i = 1; i <= 5; i++) {
+            if (pieces[i] == DraughtsState.BLACKPIECE || pieces[i] == DraughtsState.BLACKKING) {
+                baseLinePoints++;
+            }
+        }
+        return baseLinePoints;
+    }
+    /**
+     * @param pieces
+     * @param i
+     * @param score
+     * @return the score given for the certain formation of max 4 pieces
+     * @pre pieces != null, {@code 1 <= i <= 50}
+     * @inv score is the given score to a certain formation
+     */
+    public int formationSeekerW(int[] pieces, int i, int score) {
+        if (score < 4) {
+            try {
+                if ((i - 1) % 10 < 5) {
+                    if (pieces[i + 5] == DraughtsState.WHITEPIECE) {
+                        score++;
+                        formationSeekerW(pieces, i + 5, score);
+                        return score;
+                    }
+
+                    if (pieces[i + 6] == DraughtsState.WHITEPIECE) {
+                        score++;
+                        formationSeekerW(pieces, i + 6, score);
+                        return score;
+                    }
+                } else {
+                    if (pieces[i + 4] == DraughtsState.WHITEPIECE) {
+                        score++;
+                        formationSeekerW(pieces, i + 4, score);
+                        return score;
+                    }
+                    if (pieces[i + 5] == DraughtsState.WHITEPIECE) {
+                        score++;
+                        formationSeekerW(pieces, i + 5, score);
+                        return score;
+                    }
+                }
+            } catch (IndexOutOfBoundsException e) {
+                return score;
+            }
+        }
+        return score * 2;
+    }
+
+    public int formationSeekerB(int[] pieces, int i, int score) {
+        if (score < 3) {
+            try {
+                if ((i - 1) % 10 < 5) {
+                    if (pieces[i + 5] == DraughtsState.BLACKPIECE) {
+                        score++;
+                        formationSeekerB(pieces, i + 5, score);
+                        return score;
+                    }
+
+                    if (pieces[i + 6] == DraughtsState.BLACKPIECE) {
+                        score++;
+                        formationSeekerB(pieces, i + 6, score);
+                        return score;
+                    }
+                } else {
+                    if (pieces[i + 4] == DraughtsState.BLACKPIECE) {
+                        score++;
+                        formationSeekerB(pieces, i + 4, score);
+                        return score;
+                    }
+                    if (pieces[i + 5] == DraughtsState.BLACKPIECE) {
+                        score++;
+                        formationSeekerB(pieces, i + 5, score);
+                        return score;
+                    }
+                }
+            } catch (IndexOutOfBoundsException e) {
+                return score;
+            }
+        }
+        return score * 2;
     }
 }
