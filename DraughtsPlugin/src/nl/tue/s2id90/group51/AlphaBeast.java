@@ -238,9 +238,9 @@ public class AlphaBeast extends DraughtsPlayer {
                 if (behindRight1 != -1) {
                     int behindRight2 = pieceBehind(behindRight1, isWhite, false, pieces);
                     if (behindRight2 != -1) {
-                        formationWhite += 3;
+                        formationBlack += 3;
                     } else {
-                        formationWhite += 1;
+                        formationBlack += 1;
                     }
                 }
             }
