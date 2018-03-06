@@ -266,7 +266,8 @@ public class AlphaBeast extends DraughtsPlayer {
         }
         int tempiDiff = tempiWhite - tempiBlack;
 
-        return 12 * countDiff + 2 * formationDiff + baselineDiff + tempiDiff;
+        // Return final evaluation with weighted factors
+        return 24 * countDiff + 4 * formationDiff + 2 * baselineDiff + tempiDiff;
     }
 
     private int getRow(int piece) {
