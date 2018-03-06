@@ -228,9 +228,17 @@ public class AlphaBeast extends DraughtsPlayer {
                 if (behindLeft1 != -1) {
                     int behindLeft2 = pieceBehind(behindLeft1, isWhite, true, pieces);
                     if (behindLeft2 != -1) {
-                        formationWhite += 3;
+                        if (isWhite) {
+                            formationWhite += 3;
+                        } else {
+                            formationBlack += 3;
+                        }
                     } else {
-                        formationWhite += 1;
+                        if (isWhite) {
+                            formationWhite += 1;
+                        } else {
+                            formationBlack += 1;
+                        }
                     }
                 }
 
@@ -238,9 +246,17 @@ public class AlphaBeast extends DraughtsPlayer {
                 if (behindRight1 != -1) {
                     int behindRight2 = pieceBehind(behindRight1, isWhite, false, pieces);
                     if (behindRight2 != -1) {
-                        formationBlack += 3;
+                        if (isWhite) {
+                            formationWhite += 3;
+                        } else {
+                            formationBlack += 3;
+                        }
                     } else {
-                        formationBlack += 1;
+                        if (isWhite) {
+                            formationWhite += 1;
+                        } else {
+                            formationBlack += 1;
+                        }
                     }
                 }
             }
