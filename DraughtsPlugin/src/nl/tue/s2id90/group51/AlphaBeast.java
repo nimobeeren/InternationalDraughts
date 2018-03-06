@@ -96,11 +96,10 @@ public class AlphaBeast extends DraughtsPlayer {
      *
      * @param node contains DraughtsState and has field to which the best move
      * can be assigned.
-     * @param alpha
-     * @param beta
-     * @param depth maximum recursion Depth
+     * @param alpha the best value for the maximizing player
+     * @param beta  the best value for the minimizing player
+     * @param depth maximum recursion depth
      * @return the computed value of this node
-     * @throws AIStoppedException
      **/
     private int alphaBeta(DraughtsNode node, int alpha, int beta, int depth)
             throws AIStoppedException {
@@ -242,16 +241,27 @@ public class AlphaBeast extends DraughtsPlayer {
         if (numberOfPieces >= 25) {
             int baselineWhite = baselineWhite(numWhite, numBlack, pieces, numberOfPieces);
             int baselineBlack = baselineBlack(numWhite, numBlack, pieces, numberOfPieces);
-            numWhite = +baselineWhite;
-            numWhite = +baselineBlack;
+            numWhite += baselineWhite;
+            numBlack += baselineBlack;
         }
-        /**
-         * Returns the difference in total scores between black and white
-         */
-        return numWhite - numBlack;
+
+        int tempiWhite = 0, tempiBlack = 0;
+        for (int i = 1; i < pieces.length; i++) {
+            int row;
+            switch (pieces[i]) {
+                case DraughtsState.WHITEPIECE:
+                    row = getRow(i);
+                    tempiWhite += 11 - row;
+                    break;
+                case DraughtsState.BLACKPIECE:
+                    row = getRow(i);
+                    tempiBlack += row;
+                    break;
+            }
+        }
         int tempiDiff = tempiWhite - tempiBlack;
 
-        return 3 * countDiff + tempiDiff;
+        return numWhite - numBlack + tempiDiff;
     }
 
     private int getRow(int piece) {
