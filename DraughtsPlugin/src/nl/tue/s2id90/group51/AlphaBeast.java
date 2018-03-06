@@ -45,8 +45,8 @@ public class AlphaBeast extends DraughtsPlayer {
 
                 // print the results for debugging reasons
                 System.err.format(
-                        "%s: depth=%2d, best move = %5s, value=%d\n",
-                        this.getClass().getSimpleName(), depth, bestMove.getChessNotation(), bestValue
+                        "%s: depth = %2d, best move = %5s, value = %d\n",
+                        this.getClass().getSimpleName(), depth, bestMove, bestValue
                 );
             }
         } catch (AIStoppedException ex) {  /* nothing to do */ }
@@ -222,25 +222,41 @@ public class AlphaBeast extends DraughtsPlayer {
         // Check for formations
         int formationWhite = 0, formationBlack = 0;
         for (int i = 1; i <= 50; i++) {
-            if (pieces[i] == DraughtsState.WHITEPIECE) {
-                formationWhite += formationSeekerW(pieces, i, 1);
-            } else if (pieces[i] == DraughtsState.BLACKPIECE) {
-                formationBlack += formationSeekerB(pieces, i, 1);
+            if (!isEmpty(pieces[i])) {
+                boolean isWhite = isWhite(pieces[i]);
+                int behindLeft1 = pieceBehind(i, isWhite, true, pieces);
+                if (behindLeft1 != -1) {
+                    int behindLeft2 = pieceBehind(behindLeft1, isWhite, true, pieces);
+                    if (behindLeft2 != -1) {
+                        formationWhite += 3;
+                    } else {
+                        formationWhite += 1;
+                    }
+                }
+
+                int behindRight1 = pieceBehind(i, isWhite, false, pieces);
+                if (behindRight1 != -1) {
+                    int behindRight2 = pieceBehind(behindRight1, isWhite, false, pieces);
+                    if (behindRight2 != -1) {
+                        formationWhite += 3;
+                    } else {
+                        formationWhite += 1;
+                    }
+                }
             }
         }
         int formationDiff = formationWhite - formationBlack;
-
 
         // Count number of pieces on the baseline for each side
         int baselineWhite = 0, baselineBlack = 0;
         if (countTotal >= 25) {
             for (int i = 46; i <= 50; i++) {
-                if (pieces[i] == DraughtsState.WHITEPIECE || pieces[i] == DraughtsState.WHITEKING) {
+                if (isWhite(pieces[i])) {
                     baselineWhite++;
                 }
             }
             for (int i = 1; i <= 5; i++) {
-                if (pieces[i] == DraughtsState.BLACKPIECE || pieces[i] == DraughtsState.BLACKKING) {
+                if (isBlack(pieces[i])) {
                     baselineBlack++;
                 }
             }
@@ -265,86 +281,147 @@ public class AlphaBeast extends DraughtsPlayer {
         int tempiDiff = tempiWhite - tempiBlack;
 
         // Return final evaluation with weighted factors
-        return 24 * countDiff + 4 * formationDiff + 2 * baselineDiff + tempiDiff;
+        int finalValue = 0;
+        finalValue += 30 * countDiff;
+        finalValue += 4 * formationDiff;
+        finalValue += 2 * baselineDiff;
+        finalValue += tempiDiff;
+        return finalValue;
     }
 
-    private int getRow(int piece) {
-        return 1 + (piece - 1) / 5;
+    private int pieceBehind(int i, boolean isWhite, boolean lookLeft, int[] pieces) {
+        if (isWhite) {
+            return pieceBehindWhite(i, lookLeft, pieces);
+        } else {
+            return pieceBehindBlack(i, lookLeft, pieces);
+        }
     }
 
-    /**
-     * @param pieces
-     * @param i
-     * @param score
-     * @return the score given for the certain formation of max 4 pieces
-     * @pre pieces != null, {@code 1 <= i <= 50}
-     * @inv score is the given score to a certain formation
-     */
-    public int formationSeekerW(int[] pieces, int i, int score) {
-        if (score < 4) {
-            try {
-                if ((i - 1) % 10 < 5) {
-                    if (pieces[i + 5] == DraughtsState.WHITEPIECE) {
-                        score++;
-                        formationSeekerW(pieces, i + 5, score);
-                        return score;
-                    }
-
-                    if (pieces[i + 6] == DraughtsState.WHITEPIECE) {
-                        score++;
-                        formationSeekerW(pieces, i + 6, score);
-                        return score;
-                    }
-                } else {
-                    if (pieces[i + 4] == DraughtsState.WHITEPIECE) {
-                        score++;
-                        formationSeekerW(pieces, i + 4, score);
-                        return score;
-                    }
-                    if (pieces[i + 5] == DraughtsState.WHITEPIECE) {
-                        score++;
-                        formationSeekerW(pieces, i + 5, score);
-                        return score;
-                    }
+    private int pieceBehindWhite(int piece, boolean lookLeft, int[] pieces) {
+        int row = getRow(piece);
+        int column = getColumn(piece);
+        if (row % 2 == 1) {
+            // Odd row
+            if (lookLeft) {
+                // piece <= 45
+                int iBehind = piece + 5;
+                if(isWhite(pieces[iBehind])) {
+                    return iBehind;
                 }
-            } catch (IndexOutOfBoundsException e) {
-                return score;
+            } else {
+                if (column == 5) {
+                    // Rightmost column has no square right of it
+                    return -1;
+                }
+                // piece <= 44
+                int iBehind = piece + 6;
+                if (isWhite(pieces[iBehind])) {
+                    return iBehind;
+                }
+            }
+        } else {
+            // Even row
+            if (row == 10) {
+                // Bottom row has no square behind it
+                return -1;
+            }
+            if (lookLeft) {
+                if (column == 1) {
+                    // Leftmost column has no square left of it
+                    return -1;
+                }
+                // piece <= 40
+                int iBehind = piece + 4;
+                if (isWhite(pieces[iBehind])) {
+                    return iBehind;
+                }
+            } else {
+                // piece <= 40
+                int iBehind = piece + 5;
+                if (isWhite(pieces[iBehind])) {
+                    return iBehind;
+                }
             }
         }
-        return score;
+        return -1;
     }
 
-    public int formationSeekerB(int[] pieces, int i, int score) {
-        if (score < 3) {
-            try {
-                if ((i - 1) % 10 < 5) {
-                    if (pieces[i + 5] == DraughtsState.BLACKPIECE) {
-                        score++;
-                        formationSeekerB(pieces, i + 5, score);
-                        return score;
-                    }
-
-                    if (pieces[i + 6] == DraughtsState.BLACKPIECE) {
-                        score++;
-                        formationSeekerB(pieces, i + 6, score);
-                        return score;
-                    }
-                } else {
-                    if (pieces[i + 4] == DraughtsState.BLACKPIECE) {
-                        score++;
-                        formationSeekerB(pieces, i + 4, score);
-                        return score;
-                    }
-                    if (pieces[i + 5] == DraughtsState.BLACKPIECE) {
-                        score++;
-                        formationSeekerB(pieces, i + 5, score);
-                        return score;
-                    }
+    private int pieceBehindBlack(int i, boolean lookLeft, int[] pieces) {
+        int row = getRow(i);
+        int column = getColumn(i);
+        if (row % 2 == 1) {
+            // Odd row
+            if (row == 1) {
+                // Top row has no square above it
+                return -1;
+            }
+            if (lookLeft) {
+                // piece >= 10
+                int iBehind = i - 5;
+                if (isBlack(pieces[iBehind])) {
+                    return iBehind;
                 }
-            } catch (IndexOutOfBoundsException e) {
-                return score;
+            } else {
+                if (column == 5) {
+                    // Top row has no square above it, and
+                    // rightmost column has no square right of it
+                    return -1;
+                }
+                // piece >= 11
+                int iBehind = i - 4;
+                if (isBlack(pieces[iBehind])) {
+                    return iBehind;
+                }
+            }
+        } else {
+            // Even row
+            if (lookLeft) {
+                if (column == 1) {
+                    // Leftmost column has no square left of it
+                    return -1;
+                }
+                // piece >= 7
+                int iBehind = i - 6;
+                if (isBlack(pieces[iBehind])) {
+                    return iBehind;
+                }
+            } else {
+                if (column == 5) {
+                    // Rightmost column has no square right of it
+                    return -1;
+                }
+                // piece >= 6
+                int iBehind = i - 5;
+                if (isBlack(pieces[iBehind])) {
+                    return iBehind;
+                }
             }
         }
-        return score;
+        return -1;
+    }
+
+    private boolean isEmpty(int piece) {
+        return !(piece == DraughtsState.WHITEPIECE ||
+                piece == DraughtsState.WHITEKING ||
+                piece == DraughtsState.BLACKPIECE ||
+                piece == DraughtsState.BLACKKING);
+    }
+
+    private boolean isWhite(int piece) {
+        return piece == DraughtsState.WHITEPIECE ||
+                piece == DraughtsState.WHITEKING;
+    }
+
+    private boolean isBlack(int piece) {
+        return piece == DraughtsState.BLACKPIECE ||
+                piece == DraughtsState.BLACKKING;
+    }
+
+    private int getRow(int i) {
+        return 1 + (i - 1) / 5;
+    }
+
+    private int getColumn(int i) {
+        return 1 + (i - 1) % 5;
     }
 }
