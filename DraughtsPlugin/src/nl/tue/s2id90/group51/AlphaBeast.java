@@ -15,8 +15,6 @@ import org10x10.dam.game.Move;
  *
  * @author Nimo Beeren & Maas van Apeldoorn
  */
-// ToDo: rename this class (and hence this file) to have a distinct name
-//       for your player during the tournament
 public class AlphaBeast extends DraughtsPlayer {
     private int bestValue = 0;
     private int maxSearchDepth;
@@ -27,7 +25,7 @@ public class AlphaBeast extends DraughtsPlayer {
     private boolean stopped;
 
     AlphaBeast(int maxSearchDepth) {
-        super("best.png"); // ToDo: replace with your own icon
+        super("philosoraptor.jpg");
         this.maxSearchDepth = maxSearchDepth;
     }
 
