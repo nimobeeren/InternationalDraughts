@@ -1,33 +1,33 @@
 package nl.tue.s2id90.group51;
 
-import static java.lang.Integer.MAX_VALUE;
-import static java.lang.Integer.MIN_VALUE;
-
-import java.util.Collections;
-import java.util.List;
-
 import nl.tue.s2id90.draughts.DraughtsState;
 import nl.tue.s2id90.draughts.player.DraughtsPlayer;
 import org10x10.dam.game.Move;
 
+import java.util.Collections;
+import java.util.List;
+
+import static java.lang.Integer.MAX_VALUE;
+import static java.lang.Integer.MIN_VALUE;
+
 /**
  * Implementation of the DraughtsPlayer interface.
  *
- * @author huub
+ * @author Nimo Beeren & Maas van Apeldoorn
  */
 // ToDo: rename this class (and hence this file) to have a distinct name
 //       for your player during the tournament
 public class AlphaBeast extends DraughtsPlayer {
 
     private int bestValue = 0;
-    int maxSearchDepth;
+    private int maxSearchDepth;
 
     /**
-     * boolean that indicates that the GUI asked the player to stop thinking.
+     * Boolean that indicates that the GUI asked the player to stop thinking.
      */
     private boolean stopped;
 
-    public AlphaBeast(int maxSearchDepth) {
+    AlphaBeast(int maxSearchDepth) {
         super("best.png"); // ToDo: replace with your own icon
         this.maxSearchDepth = maxSearchDepth;
     }
@@ -85,9 +85,9 @@ public class AlphaBeast extends DraughtsPlayer {
     }
 
     /**
-     * returns random valid move in state s, or null if no moves exist.
+     * Returns random valid move in state s, or null if no moves exist.
      */
-    Move getRandomValidMove(DraughtsState s) {
+    private Move getRandomValidMove(DraughtsState s) {
         List<Move> moves = s.getMoves();
         Collections.shuffle(moves);
         return moves.isEmpty() ? null : moves.get(0);
@@ -104,9 +104,8 @@ public class AlphaBeast extends DraughtsPlayer {
      * @param depth maximum recursion Depth
      * @return the computed value of this node
      * @throws AIStoppedException
-     *
-     */
-    int alphaBeta(DraughtsNode node, int alpha, int beta, int depth)
+     **/
+    private int alphaBeta(DraughtsNode node, int alpha, int beta, int depth)
             throws AIStoppedException {
         if (node.getState().isWhiteToMove()) {
             return alphaBetaMax(node, alpha, beta, depth);
@@ -119,16 +118,14 @@ public class AlphaBeast extends DraughtsPlayer {
      * Does an alpha-beta computation with the given alpha and beta where the
      * player that is to move in node is the minimizing player.
      *
-     * @param node contains DraughtsState and has field to which the best move
-     * can be assigned.
-     * @param alpha
-     * @param beta
-     * @param depth maximum recursion Depth
-     * @return the compute value of this node
-     * @throws AIStoppedException thrown whenever the boolean stopped has been
-     * set to true.
+     * @param node  contains DraughtsState and has field to which the best move can be assigned
+     * @param alpha the best value for the maximizing player
+     * @param beta  the best value for the minimizing player
+     * @param depth maximum recursion depth
+     * @return the computed value of this node
+     * @throws AIStoppedException thrown whenever the boolean stopped has been set to true.
      */
-    int alphaBetaMin(DraughtsNode node, int alpha, int beta, int depth)
+    private int alphaBetaMin(DraughtsNode node, int alpha, int beta, int depth)
             throws AIStoppedException {
         if (stopped) {
             stopped = false;
@@ -138,9 +135,9 @@ public class AlphaBeast extends DraughtsPlayer {
         if (depth <= 0) {
             return evaluate(state);
         }
-        List<Move> children = state.getMoves();
-        while (!children.isEmpty()) {
-            Move move = children.get(0);
+        List<Move> moves = state.getMoves();
+        while (!moves.isEmpty()) {
+            Move move = moves.get(0);
             state.doMove(move);
             DraughtsNode childNode = new DraughtsNode(state);
             int childValue = alphaBetaMax(childNode, alpha, beta, depth - 1);
@@ -149,7 +146,7 @@ public class AlphaBeast extends DraughtsPlayer {
                 node.setBestMove(move);
             }
 
-            children.remove(0);
+            moves.remove(0);
             state.undoMove(move);
 
             if (beta <= alpha) {
@@ -163,16 +160,14 @@ public class AlphaBeast extends DraughtsPlayer {
      * Does an alpha-beta computation with the given alpha and beta where the
      * player that is to move in node is the maximizing player.
      *
-     * @param node contains DraughtsState and has field to which the best move
-     * can be assigned.
-     * @param alpha
-     * @param beta
-     * @param depth maximum recursion Depth
-     * @return the compute value of this node
-     * @throws AIStoppedException thrown whenever the boolean stopped has been
-     * set to true.
+     * @param node  contains DraughtsState and has field to which the best move can be assigned
+     * @param alpha the best value for the maximizing player
+     * @param beta  the best value for the minimizing player
+     * @param depth maximum recursion depth
+     * @return the computed value of this node
+     * @throws AIStoppedException thrown whenever the boolean stopped has been set to true.
      */
-    int alphaBetaMax(DraughtsNode node, int alpha, int beta, int depth)
+    private int alphaBetaMax(DraughtsNode node, int alpha, int beta, int depth)
             throws AIStoppedException {
         if (stopped) {
             stopped = false;
@@ -182,9 +177,9 @@ public class AlphaBeast extends DraughtsPlayer {
         if (depth <= 0) {
             return evaluate(state);
         }
-        List<Move> children = state.getMoves();
-        while (!children.isEmpty()) {
-            Move move = children.get(0);
+        List<Move> moves = state.getMoves();
+        while (!moves.isEmpty()) {
+            Move move = moves.get(0);
             state.doMove(move);
             DraughtsNode childNode = new DraughtsNode(state);
             int childValue = alphaBetaMin(childNode, alpha, beta, depth - 1);
@@ -193,7 +188,7 @@ public class AlphaBeast extends DraughtsPlayer {
                 node.setBestMove(move);
             }
 
-            children.remove(0);
+            moves.remove(0);
             state.undoMove(move);
 
             if (alpha >= beta) {
@@ -206,7 +201,7 @@ public class AlphaBeast extends DraughtsPlayer {
     /**
      * A method that evaluates the given state.
      */
-    int evaluate(DraughtsState state) {
+    private int evaluate(DraughtsState state) {
         int numWhite = 0, numBlack = 0;
         int[] pieces = state.getPieces();
         /**
