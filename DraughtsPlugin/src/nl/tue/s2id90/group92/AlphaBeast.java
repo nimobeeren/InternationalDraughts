@@ -198,6 +198,15 @@ public class AlphaBeast extends DraughtsPlayer {
     private int evaluate(DraughtsState state) {
         int[] pieces = state.getPieces();
 
+        // If a player can make no moves, they lose
+        if (state.getMoves().isEmpty()) {
+            if (state.isWhiteToMove()) {
+                return MIN_VALUE;
+            } else {
+                return MAX_VALUE;
+            }
+        }
+
         return 30 * evalCount(pieces) +
                 4 * evalFormations(pieces) +
                 2 * evalBaseline(pieces) +
