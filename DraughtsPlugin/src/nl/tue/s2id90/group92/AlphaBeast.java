@@ -93,7 +93,7 @@ public class AlphaBeast extends DraughtsPlayer {
      * as maximizing player and the black player as minimizing player.
      *
      * @param node  contains DraughtsState and has field to which the best move
-     *              can be assigned.
+     *              can be assigned
      * @param alpha the best value for the maximizing player
      * @param beta  the best value for the minimizing player
      * @param depth maximum recursion depth
@@ -125,16 +125,27 @@ public class AlphaBeast extends DraughtsPlayer {
             stopped = false;
             throw new AIStoppedException();
         }
+
         DraughtsState state = node.getState();
+
         if (depth <= 0) {
             return evaluate(state);
         }
+
         List<Move> moves = state.getMoves();
+
+        // Don't decrease depth if only one move is possible (flexible depth)
+        if (moves.size() == 1) {
+            depth++;
+        }
+
         while (!moves.isEmpty()) {
             Move move = moves.get(0);
             state.doMove(move);
             DraughtsNode childNode = new DraughtsNode(state);
+
             int childValue = alphaBetaMax(childNode, alpha, beta, depth - 1);
+
             if (childValue < beta) {
                 beta = childValue;
                 node.setBestMove(move);
@@ -147,6 +158,7 @@ public class AlphaBeast extends DraughtsPlayer {
                 return alpha;
             }
         }
+
         return beta;
     }
 
@@ -167,16 +179,26 @@ public class AlphaBeast extends DraughtsPlayer {
             stopped = false;
             throw new AIStoppedException();
         }
+
         DraughtsState state = node.getState();
         if (depth <= 0) {
             return evaluate(state);
         }
+
         List<Move> moves = state.getMoves();
+
+        // Don't decrease depth if only one move is possible (flexible depth)
+        if (moves.size() == 1) {
+            depth++;
+        }
+
         while (!moves.isEmpty()) {
             Move move = moves.get(0);
             state.doMove(move);
             DraughtsNode childNode = new DraughtsNode(state);
+
             int childValue = alphaBetaMin(childNode, alpha, beta, depth - 1);
+
             if (childValue > alpha) {
                 alpha = childValue;
                 node.setBestMove(move);
@@ -189,6 +211,7 @@ public class AlphaBeast extends DraughtsPlayer {
                 return beta;
             }
         }
+
         return alpha;
     }
 
