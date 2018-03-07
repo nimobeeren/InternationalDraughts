@@ -1,4 +1,4 @@
-package nl.tue.s2id90.group51;
+package nl.tue.s2id90.group92;
 
 import static java.lang.Integer.MAX_VALUE;
 import static java.lang.Integer.MIN_VALUE;

@@ -1,16 +1,11 @@
-package nl.tue.s2id90.group51;
+package nl.tue.s2id90.group92;
 
-import nl.tue.s2id90.group51.samples.UninformedPlayer;
-import nl.tue.s2id90.group51.samples.OptimisticPlayer;
-import nl.tue.s2id90.group51.samples.BuggyPlayer;
 import net.xeoh.plugins.base.annotations.PluginImplementation;
 import nl.tue.s2id90.draughts.DraughtsPlayerProvider;
 import nl.tue.s2id90.draughts.DraughtsPlugin;
 
 
-
 /**
- *
  * @author huub
  */
 @PluginImplementation
