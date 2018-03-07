@@ -198,13 +198,11 @@ public class AlphaBeast extends DraughtsPlayer {
     private int evaluate(DraughtsState state) {
         int[] pieces = state.getPieces();
 
-        int finalValue = 0;
-        finalValue += 30 * evalCount(pieces);
-        finalValue += 4 * evalFormations(pieces);
-        finalValue += 2 * evalBaseline(pieces);
-        finalValue += evalTempi(pieces);
-        finalValue += evalCenter(pieces);
-        return finalValue;
+        return 30 * evalCount(pieces) +
+                4 * evalFormations(pieces) +
+                2 * evalBaseline(pieces) +
+                evalTempi(pieces) +
+                evalCenter(pieces);
     }
 
     /**
@@ -214,26 +212,38 @@ public class AlphaBeast extends DraughtsPlayer {
      * @return difference of piece count between players
      */
     private int evalCount(int[] pieces) {
-        int countWhite = 0, countBlack = 0;
+        int piecesWhite = 0, piecesBlack = 0;
+        int kingsWhite = 0, kingsBlack = 0;
 
         for (int p : pieces) {
             switch (p) {
                 case DraughtsState.WHITEPIECE:
-                    countWhite += 1;
+                    piecesWhite++;
                     break;
                 case DraughtsState.WHITEKING:
-                    countWhite += 3;
+                    kingsWhite++;
                     break;
                 case DraughtsState.BLACKPIECE:
-                    countBlack += 1;
+                    piecesBlack++;
                     break;
                 case DraughtsState.BLACKKING:
-                    countBlack += 3;
+                    kingsBlack++;
                     break;
             }
         }
 
-        return countWhite - countBlack;
+        int pieceWeight, kingWeight;
+        if (piecesWhite + piecesBlack > 15) {
+            pieceWeight = 1;
+            kingWeight = 3;
+        } else {
+            // Kings are more important in end-game
+            pieceWeight = 1;
+            kingWeight = 5;
+        }
+
+        return pieceWeight * (piecesWhite - piecesBlack) +
+                kingWeight * (kingsWhite - kingsBlack);
     }
 
     /**
