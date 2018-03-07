@@ -1,14 +1,14 @@
 package nl.tue.s2id90.group92;
 
-import static java.lang.Integer.MAX_VALUE;
-import static java.lang.Integer.MIN_VALUE;
+import nl.tue.s2id90.draughts.DraughtsState;
+import nl.tue.s2id90.draughts.player.DraughtsPlayer;
+import org10x10.dam.game.Move;
 
 import java.util.Collections;
 import java.util.List;
 
-import nl.tue.s2id90.draughts.DraughtsState;
-import nl.tue.s2id90.draughts.player.DraughtsPlayer;
-import org10x10.dam.game.Move;
+import static java.lang.Integer.MAX_VALUE;
+import static java.lang.Integer.MIN_VALUE;
 
 /**
  * Implementation of the DraughtsPlayer interface.
@@ -92,8 +92,8 @@ public class AlphaBeast extends DraughtsPlayer {
      * Implementation of alpha-beta that automatically chooses the white player
      * as maximizing player and the black player as minimizing player.
      *
-     * @param node contains DraughtsState and has field to which the best move
-     * can be assigned.
+     * @param node  contains DraughtsState and has field to which the best move
+     *              can be assigned.
      * @param alpha the best value for the maximizing player
      * @param beta  the best value for the minimizing player
      * @param depth maximum recursion depth
@@ -202,18 +202,18 @@ public class AlphaBeast extends DraughtsPlayer {
         int countWhite = 0, countBlack = 0;
         for (int p : pieces) {
             switch (p) {
-            case DraughtsState.WHITEPIECE:
-                countWhite += 1;
-                break;
-            case DraughtsState.WHITEKING:
-                countWhite += 3;
-                break;
-            case DraughtsState.BLACKPIECE:
-                countBlack += 1;
-                break;
-            case DraughtsState.BLACKKING:
-                countBlack += 3;
-                break;
+                case DraughtsState.WHITEPIECE:
+                    countWhite += 1;
+                    break;
+                case DraughtsState.WHITEKING:
+                    countWhite += 3;
+                    break;
+                case DraughtsState.BLACKPIECE:
+                    countBlack += 1;
+                    break;
+                case DraughtsState.BLACKKING:
+                    countBlack += 3;
+                    break;
             }
         }
         int countTotal = countWhite + countBlack;
@@ -321,7 +321,7 @@ public class AlphaBeast extends DraughtsPlayer {
             if (lookLeft) {
                 // piece <= 45
                 int iBehind = piece + 5;
-                if(isWhite(pieces[iBehind])) {
+                if (isWhite(pieces[iBehind])) {
                     return iBehind;
                 }
             } else {
