@@ -198,7 +198,21 @@ public class AlphaBeast extends DraughtsPlayer {
     private int evaluate(DraughtsState state) {
         int[] pieces = state.getPieces();
 
-        // Count the number of pieces for each side
+        int finalValue = 0;
+        finalValue += 30 * evalCount(pieces);
+        finalValue += 4 * evalFormations(pieces);
+        finalValue += 2 * evalBaseline(pieces);
+        finalValue += evalTempi(pieces);
+        return finalValue;
+    }
+
+    /**
+     * Counts the number of pieces for each player.
+     *
+     * @param pieces board state
+     * @return difference of piece count between players
+     */
+    private int evalCount(int[] pieces) {
         int countWhite = 0, countBlack = 0;
         for (int p : pieces) {
             switch (p) {
@@ -216,10 +230,16 @@ public class AlphaBeast extends DraughtsPlayer {
                     break;
             }
         }
-        int countTotal = countWhite + countBlack;
-        int countDiff = countWhite - countBlack;
+        return countWhite - countBlack;
+    }
 
-        // Check for formations
+    /**
+     * Gets a score based on the strength of formations on the board, i.e. rows of 2 or 3 same-colored pieces.
+     *
+     * @param pieces board state
+     * @return difference of formation strength between players
+     */
+    private int evalFormations(int[] pieces) {
         int formationWhite = 0, formationBlack = 0;
         for (int i = 1; i <= 50; i++) {
             if (!isEmpty(pieces[i])) {
@@ -261,25 +281,51 @@ public class AlphaBeast extends DraughtsPlayer {
                 }
             }
         }
-        int formationDiff = formationWhite - formationBlack;
+        return formationWhite - formationBlack;
+    }
 
-        // Count number of pieces on the baseline for each side
+    /**
+     * Gets a score based on how many pieces are still on the baseline (more is better).
+     * Only affects early to mid game (at least 25 pieces on the board).
+     *
+     * @param pieces board state
+     * @return difference of baseline score between players
+     */
+    private int evalBaseline(int[] pieces) {
         int baselineWhite = 0, baselineBlack = 0;
-        if (countTotal >= 25) {
-            for (int i = 46; i <= 50; i++) {
-                if (isWhite(pieces[i])) {
-                    baselineWhite++;
-                }
-            }
-            for (int i = 1; i <= 5; i++) {
-                if (isBlack(pieces[i])) {
-                    baselineBlack++;
-                }
+        int otherWhite = 0, otherBlack = 0;
+        for (int i = 1; i < 6; i++) {
+            if (isBlack(pieces[i])) {
+                baselineBlack++;
             }
         }
-        int baselineDiff = baselineWhite - baselineBlack;
+        for (int i = 6; i < 46; i++) {
+            if (isWhite(pieces[i])) {
+                otherWhite++;
+            } else if (isBlack(pieces[i])) {
+                otherBlack++;
+            }
+        }
+        for (int i = 46; i <= 50; i++) {
+            if (isWhite(pieces[i])) {
+                baselineWhite++;
+            }
+        }
+        if (baselineWhite + baselineBlack + otherWhite + otherBlack < 25) {
+            return 0;
+        }
+        return baselineWhite - baselineBlack;
 
-        // Calculate tempi difference
+    }
+
+    /**
+     * Calculates the tempi difference, to measure how far pieces have advanced in the field.
+     * Calculated as the sum of each piece multiplied with its row position.
+     *
+     * @param pieces board state
+     * @return tempi difference
+     */
+    private int evalTempi(int[] pieces) {
         int tempiWhite = 0, tempiBlack = 0;
         for (int i = 1; i < pieces.length; i++) {
             int row;
@@ -294,15 +340,7 @@ public class AlphaBeast extends DraughtsPlayer {
                     break;
             }
         }
-        int tempiDiff = tempiWhite - tempiBlack;
-
-        // Return final evaluation with weighted factors
-        int finalValue = 0;
-        finalValue += 30 * countDiff;
-        finalValue += 4 * formationDiff;
-        finalValue += 2 * baselineDiff;
-        finalValue += tempiDiff;
-        return finalValue;
+        return tempiWhite - tempiBlack;
     }
 
     private int pieceBehind(int i, boolean isWhite, boolean lookLeft, int[] pieces) {
