@@ -203,6 +203,7 @@ public class AlphaBeast extends DraughtsPlayer {
         finalValue += 4 * evalFormations(pieces);
         finalValue += 2 * evalBaseline(pieces);
         finalValue += evalTempi(pieces);
+        finalValue += evalCenter(pieces);
         return finalValue;
     }
 
@@ -214,6 +215,7 @@ public class AlphaBeast extends DraughtsPlayer {
      */
     private int evalCount(int[] pieces) {
         int countWhite = 0, countBlack = 0;
+
         for (int p : pieces) {
             switch (p) {
                 case DraughtsState.WHITEPIECE:
@@ -230,6 +232,7 @@ public class AlphaBeast extends DraughtsPlayer {
                     break;
             }
         }
+
         return countWhite - countBlack;
     }
 
@@ -241,6 +244,7 @@ public class AlphaBeast extends DraughtsPlayer {
      */
     private int evalFormations(int[] pieces) {
         int formationWhite = 0, formationBlack = 0;
+
         for (int i = 1; i <= 50; i++) {
             if (!isEmpty(pieces[i])) {
                 boolean isWhite = isWhite(pieces[i]);
@@ -281,6 +285,7 @@ public class AlphaBeast extends DraughtsPlayer {
                 }
             }
         }
+
         return formationWhite - formationBlack;
     }
 
@@ -294,6 +299,7 @@ public class AlphaBeast extends DraughtsPlayer {
     private int evalBaseline(int[] pieces) {
         int baselineWhite = 0, baselineBlack = 0;
         int otherWhite = 0, otherBlack = 0;
+
         for (int i = 1; i < 6; i++) {
             if (isBlack(pieces[i])) {
                 baselineBlack++;
@@ -311,11 +317,11 @@ public class AlphaBeast extends DraughtsPlayer {
                 baselineWhite++;
             }
         }
+
         if (baselineWhite + baselineBlack + otherWhite + otherBlack < 25) {
             return 0;
         }
         return baselineWhite - baselineBlack;
-
     }
 
     /**
@@ -327,6 +333,7 @@ public class AlphaBeast extends DraughtsPlayer {
      */
     private int evalTempi(int[] pieces) {
         int tempiWhite = 0, tempiBlack = 0;
+
         for (int i = 1; i < pieces.length; i++) {
             int row;
             switch (pieces[i]) {
@@ -340,7 +347,33 @@ public class AlphaBeast extends DraughtsPlayer {
                     break;
             }
         }
+
         return tempiWhite - tempiBlack;
+    }
+
+    /**
+     * Counts pieces in the center of the board (e.g. not on the edges).
+     *
+     * @param pieces board state
+     * @return difference in center pieces between players
+     */
+    private int evalCenter(int[] pieces) {
+        int whiteCenter = 0, blackCenter = 0;
+
+        for (int p : pieces) {
+            if (!isEmpty(p)) {
+                int column = getColumn(p);
+                if (!(column == 1 || column == 5)) {
+                    if (isWhite(p)) {
+                        whiteCenter++;
+                    } else {
+                        blackCenter++;
+                    }
+                }
+            }
+        }
+
+        return whiteCenter - blackCenter;
     }
 
     private int pieceBehind(int i, boolean isWhite, boolean lookLeft, int[] pieces) {
