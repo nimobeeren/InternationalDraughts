@@ -127,12 +127,20 @@ public class AlphaBeast extends DraughtsPlayer {
         }
 
         DraughtsState state = node.getState();
+        List<Move> moves = state.getMoves();
 
-        if (depth <= 0) {
+        // Iff first move is not a capture, then no move is a capture, and state is quiet
+        boolean quiet = moves.isEmpty() || !moves.get(0).isCapture();
+
+        if (!quiet) {
+            if (depth <= 0) {
+                // If state is not quiet, search one move deeper
+                depth++;
+            }
+        } else if (depth <= 0 || moves.isEmpty()) {
             return evaluate(state);
         }
 
-        List<Move> moves = state.getMoves();
 
         // Don't decrease depth if only one move is possible (flexible depth)
         if (moves.size() == 1) {
@@ -181,11 +189,20 @@ public class AlphaBeast extends DraughtsPlayer {
         }
 
         DraughtsState state = node.getState();
-        if (depth <= 0) {
+        List<Move> moves = state.getMoves();
+
+        // Iff first move is not a capture, then no move is a capture, and state is quiet
+        boolean quiet = moves.isEmpty() || !moves.get(0).isCapture();
+
+        if (!quiet) {
+            if (depth <= 0) {
+                // If state is not quiet, search one move deeper
+                depth++;
+            }
+        } else if (depth <= 0 || moves.isEmpty()) {
             return evaluate(state);
         }
 
-        List<Move> moves = state.getMoves();
 
         // Don't decrease depth if only one move is possible (flexible depth)
         if (moves.size() == 1) {
